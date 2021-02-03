@@ -1,4 +1,6 @@
 import * as React from "react";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { Navbar } from "./components";
 import { useFetchAllCities } from "./hooks";
 
 const App: React.FC = (): JSX.Element => {
@@ -7,8 +9,10 @@ const App: React.FC = (): JSX.Element => {
   );
 
   return (
-    <div>
-      {isLoading && <h1>Loading...</h1>}
+    <>
+      <CssBaseline>
+        <Navbar brandTitle="City Searcher" />
+        {/* {isLoading && <h1>Loading...</h1>}
       {isError && <h1>Something went wrong...</h1>}
       {cities?.length && (
         <div>
@@ -16,8 +20,9 @@ const App: React.FC = (): JSX.Element => {
             <p key={`city-${lat}-${lng}`}>{city}</p>
           ))}
         </div>
-      )}
-    </div>
+      )} */}
+      </CssBaseline>
+    </>
   );
 };
 
