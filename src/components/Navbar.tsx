@@ -14,6 +14,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: theme.spacing(1),
       verticalAlign: "bottom",
     },
+    brandText: {
+      userSelect: "none",
+    },
   })
 );
 
@@ -26,7 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ brandTitle }): JSX.Element => {
 
   return (
     <AppBar position="static" className={classes.root}>
-      <Typography variant="h5">
+      <Typography variant="h5" className={classes.brandText}>
         <PageviewIcon fontSize="large" className={classes.icon} />
         {brandTitle}
       </Typography>
