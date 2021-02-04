@@ -1,18 +1,49 @@
-type NetworkFetchResult = {
+export type NetworkFetchResult = {
   isLoading: boolean;
   isError: boolean;
 };
 
-type City = {
+export type CityRawResponse = {
+  city: string;
+  lat: string;
+  lng: string;
+  country: string;
+  iso2: string;
+  admin_name: string;
+  capital: string;
+  population: string;
+  population_proper: string;
+};
+
+export type City = {
   city: string;
   lat: number;
   lng: number;
-  country: string;
-  iso2: string;
   province: string;
-  capital: string;
-  population: number;
-  population_proper: number;
+  population: string;
+  populationNumeric: number;
 };
 
-export type CitiesFetchResult = NetworkFetchResult & { data: Array<City> };
+export type CititesContextState = {
+  data: Array<City>;
+  filteredData: Array<City>;
+  totalPages: number;
+  currentPage: number;
+  itemsPerPage: number;
+  isDataReady: boolean;
+};
+
+export type CitiesAction = {
+  type: CitiesActionTypes;
+  data?: Array<City>;
+  currentPage?: number;
+  isReady?: boolean;
+};
+
+export type CitiesDispatch = (action: CitiesAction) => void;
+
+type CitiesActionTypes =
+  | "setData"
+  | "setCurrentPage"
+  | "setDataSubset"
+  | "toggleDataReady";
