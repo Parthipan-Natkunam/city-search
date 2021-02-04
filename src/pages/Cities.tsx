@@ -17,7 +17,7 @@ const CitiesPage: React.FC = (): JSX.Element => {
         <>
           {getCurrentPageData(cities, currentPage, itemsPerPage).map(
             ({ city: name, population, province, lat, lng }: any) => (
-              <Grid item xs={12} sm={6} lg={4}>
+              <Grid item xs={12} sm={6} lg={4} key={`grid-${lat}-${lng}`}>
                 <CityCard
                   name={name}
                   population={population}
