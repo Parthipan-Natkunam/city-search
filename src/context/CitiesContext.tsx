@@ -8,7 +8,7 @@ const initialState: CititesContextState = {
   provinces: [],
   currentPage: 1,
   totalPages: 0,
-  itemsPerPage: 6,
+  itemsPerPage: 12,
   filters: null,
 };
 
