@@ -69,3 +69,7 @@ export const debounce = (callback: Function, timeout?: number): Function => {
     timeoutId = window.setTimeout(() => callback(input), timeout ?? 300);
   };
 };
+
+export function getAllProvinces(originalList: Array<City>): Array<string> {
+  return originalList.map((city: City) => city.province);
+}

@@ -1,7 +1,7 @@
 import * as React from "react";
 import Grid from "@material-ui/core/Grid";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import { CityCard, Pagination } from "../components";
+import { CityCard, Pagination, GranularFilters } from "../components";
 import { useFetchAllCities } from "../hooks";
 import { useCitiesState, useCitiesDispatch } from "../context/CitiesContext";
 import { getCurrentPageData } from "../utils";
@@ -13,6 +13,17 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingBottom: theme.spacing(3),
       display: "flex",
       justifyContent: "center",
+    },
+    resultsContainer: {
+      marginTop: theme.spacing(18),
+    },
+    filtersContainer: {
+      position: "fixed",
+      width: "100%",
+      zIndex: 999,
+      backgroundColor: "rgba(255,255,255,0.2)",
+      borderBottom: "1px solid #888585",
+      boxShadow: theme.shadows[10],
     },
   })
 );
@@ -35,7 +46,10 @@ const CitiesPage: React.FC = (): JSX.Element => {
 
   return (
     <>
-      <Grid container>
+      <Grid container className={classes.filtersContainer}>
+        <GranularFilters />
+      </Grid>
+      <Grid container className={classes.resultsContainer}>
         {isLoading && <h1>Loading...</h1>}
         {isError && <h1>Something went wrong...</h1>}
         {cities?.length ? (
