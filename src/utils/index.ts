@@ -1,4 +1,4 @@
-import { City, CityRawResponse } from "../types";
+import { City, CityRawResponse, SearchableKey } from "../types";
 
 function processCityName(name: string | undefined): string {
   return name?.trim()?.length ? name.trim() : "Unnamed City";
@@ -47,3 +47,25 @@ export function getCurrentPageData(
     ? [...FilteredData].slice(startIndex, excludedUpperIndex)
     : [];
 }
+
+export function searchForStringValues(
+  list: Array<City>,
+  key: SearchableKey,
+  searchTerm: string
+): Array<City> {
+  const trimmedSearchTerm = searchTerm.trim().toLowerCase();
+  if (trimmedSearchTerm.length) {
+    return list.filter(
+      (item: City) => item[key].toLowerCase().indexOf(trimmedSearchTerm) > -1
+    );
+  }
+  return list;
+}
+
+export const debounce = (callback: Function, timeout?: number): Function => {
+  let timeoutId: number | null = null;
+  return (input: string | undefined) => {
+    timeoutId && window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => callback(input), timeout ?? 300);
+  };
+};

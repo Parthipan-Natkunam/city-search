@@ -1,3 +1,5 @@
+export type SearchableKey = "city";
+
 export type NetworkFetchResult = {
   isLoading: boolean;
   isError: boolean;
@@ -45,5 +47,5 @@ export type CitiesDispatch = (action: CitiesAction) => void;
 type CitiesActionTypes =
   | "setData"
   | "setCurrentPage"
-  | "setDataSubset"
+  | "setFilteredData"
   | "toggleDataReady";

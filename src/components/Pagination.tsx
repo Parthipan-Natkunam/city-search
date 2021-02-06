@@ -1,19 +1,21 @@
 import * as React from "react";
 import MUIPagination from "@material-ui/lab/Pagination";
-import { useCitiesState, useCitiesDispatch } from "../context/CitiesContext";
 
-const Pagination: React.FC = (): JSX.Element => {
-  const { totalPages } = useCitiesState();
-  const currentPageDispatch = useCitiesDispatch();
+type PaginationProps = {
+  totalPages: number;
+  currentPage: number;
+  handlePageChange: (page: number) => void;
+};
 
-  const handlePageChange = (pageNumber: number) => {
-    currentPageDispatch({ type: "setCurrentPage", currentPage: pageNumber });
-    window.scroll({ top: 0, left: 0, behavior: "smooth" });
-  };
-
+const Pagination: React.FC<PaginationProps> = ({
+  totalPages,
+  currentPage,
+  handlePageChange,
+}): JSX.Element => {
   return (
     <MUIPagination
       count={totalPages}
+      page={currentPage}
       color="primary"
       onChange={(event: Object, page: number) => handlePageChange(page)}
       shape="rounded"

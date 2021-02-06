@@ -34,8 +34,15 @@ function citiesReducer(state: CititesContextState, action: CitiesAction) {
       return action.currentPage
         ? { ...state, currentPage: action.currentPage }
         : state;
-    case "setDataSubset":
-      return action.data ? { ...state, filteredData: action.data } : state;
+    case "setFilteredData":
+      return action.data
+        ? {
+            ...state,
+            filteredData: action.data,
+            totalPages: Math.ceil(action.data.length / state.itemsPerPage),
+            currentPage: 1,
+          }
+        : state;
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
