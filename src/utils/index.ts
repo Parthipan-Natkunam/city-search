@@ -1,4 +1,10 @@
-import { City, CityRawResponse, SearchableKey } from "../types";
+import {
+  City,
+  CityRawResponse,
+  SearchableKey,
+  ExactMatchSearchableKey,
+  Filters,
+} from "../types";
 
 function processCityName(name: string | undefined): string {
   return name?.trim()?.length ? name.trim() : "Unnamed City";
@@ -53,8 +59,8 @@ export function searchForStringValues(
   key: SearchableKey,
   searchTerm: string
 ): Array<City> {
-  const trimmedSearchTerm = searchTerm.trim().toLowerCase();
-  if (trimmedSearchTerm.length) {
+  const trimmedSearchTerm = searchTerm?.trim()?.toLowerCase();
+  if (trimmedSearchTerm?.length) {
     return list.filter(
       (item: City) => item[key].toLowerCase().indexOf(trimmedSearchTerm) > -1
     );
@@ -71,5 +77,30 @@ export const debounce = (callback: Function, timeout?: number): Function => {
 };
 
 export function getAllProvinces(originalList: Array<City>): Array<string> {
-  return originalList.map((city: City) => city.province);
+  const uniqueProvinces = new Set([
+    "None",
+    ...originalList.map((city: City) => city.province),
+  ]);
+  return Array.from(uniqueProvinces);
+}
+
+export function getExactMatchData(
+  list: Array<City>,
+  key: ExactMatchSearchableKey,
+  value?: string
+): Array<City> {
+  if (!value || value === "None") return list;
+  return list.filter((item: City) => item[key] === value);
+}
+
+export function getFilteredResults(
+  originalList: Array<City>,
+  filters: Filters
+): Array<City> {
+  let results: Array<City>;
+  // perform city search if searchTerm is present
+  results = searchForStringValues(originalList, "city", filters?.name);
+  //perform province filter
+  results = getExactMatchData(results, "province", filters?.province);
+  return results;
 }

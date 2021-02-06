@@ -1,4 +1,6 @@
 export type SearchableKey = "city";
+export type ExactMatchSearchableKey = "province";
+export type SortableKey = SearchableKey | "population";
 
 export type NetworkFetchResult = {
   isLoading: boolean;
@@ -32,14 +34,29 @@ export type CititesContextState = {
   totalPages: number;
   currentPage: number;
   itemsPerPage: number;
-  isDataReady: boolean;
+  filters: Filters | null;
+  provinces: Array<string>;
+};
+
+export type Sortables = {
+  sortKey: SortableKey;
+  sortOrder: "ASC" | "DESC" | "None";
+};
+
+export type Filters = {
+  name?: string;
+  province?: string;
+  sort?: Sortables;
 };
 
 export type CitiesAction = {
   type: CitiesActionTypes;
   data?: Array<City>;
   currentPage?: number;
-  isReady?: boolean;
+  sortKey?: SortableKey;
+  sortOrder?: "ASC" | "DESC";
+  searchTerm?: string;
+  province?: string;
 };
 
 export type CitiesDispatch = (action: CitiesAction) => void;
@@ -47,5 +64,7 @@ export type CitiesDispatch = (action: CitiesAction) => void;
 type CitiesActionTypes =
   | "setData"
   | "setCurrentPage"
-  | "setFilteredData"
-  | "toggleDataReady";
+  | "setSearchTerm"
+  | "setProvinceFilter"
+  | "setSortKey"
+  | "setSortOrder";

@@ -2,13 +2,10 @@ import * as React from "react";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
 import GpsNotFixedIcon from "@material-ui/icons/GpsNotFixed";
+import DropDrownFilter from "./FilterDropDrown";
+import { useCitiesState, useCitiesDispatch } from "../context/CitiesContext";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,13 +24,9 @@ const useStyles = makeStyles((theme: Theme) =>
     formWrapper: {
       flexBasis: "640px",
     },
-    formItem: {
-      margin: theme.spacing(0, 2),
-      width: 120,
-    },
     button: {
       position: "absolute",
-      top: 25,
+      top: 24,
       right: 15,
     },
   })
@@ -41,6 +34,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const GranularFilters: React.FC = (): JSX.Element => {
   const classes = useStyles();
+  const { filters, provinces } = useCitiesState();
+  const filterDispatch = useCitiesDispatch();
 
   return (
     <Paper elevation={6} className={classes.paper}>
@@ -53,43 +48,44 @@ const GranularFilters: React.FC = (): JSX.Element => {
         Filters
       </Typography>
       <div className={classes.formWrapper}>
-        <FormControl className={classes.formItem}>
-          <InputLabel id="demo-simple-select-label">Province</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            // value={age}
-            // onChange={handleChange}
-          >
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty Five</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl className={classes.formItem}>
-          <InputLabel id="demo-simple-select-label">Sort By</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            // value={age}
-            // onChange={handleChange}
-          >
-            <MenuItem value={10}>Name</MenuItem>
-            <MenuItem value={20}>Population</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl className={classes.formItem}>
-          <InputLabel id="demo-simple-select-label">Order</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            // value={age}
-            // onChange={handleChange}
-          >
-            <MenuItem value={10}>Asc</MenuItem>
-            <MenuItem value={20}>Desc</MenuItem>
-          </Select>
-        </FormControl>
+        <DropDrownFilter
+          label="Province"
+          menuOptions={provinces}
+          value={filters?.province}
+          changeHandler={(val: string | undefined) =>
+            filterDispatch({
+              type: "setProvinceFilter",
+              province: val ?? "None",
+            })
+          }
+          applyDefaultSelection
+        />
+        <DropDrownFilter
+          label="Sort By"
+          menuOptions={["None", "Name", "Population"]}
+          value={filters?.sort?.sortKey}
+          changeHandler={(val: any) =>
+            !!val
+              ? val === "None"
+                ? filterDispatch({ type: "setSortKey" })
+                : filterDispatch({ type: "setSortKey", sortKey: val })
+              : null
+          }
+          applyDefaultSelection
+        />
+        {filters?.sort ? (
+          <DropDrownFilter
+            label="Order"
+            menuOptions={["ASC", "DESC"]}
+            changeHandler={(val: any) =>
+              !!val && !!filters?.sort
+                ? filterDispatch({ type: "setSortOrder", sortOrder: val })
+                : null
+            }
+            value={filters?.sort?.sortOrder}
+            applyDefaultSelection={!!filters?.sort}
+          />
+        ) : null}
         <Button color="primary" variant="contained" className={classes.button}>
           <GpsNotFixedIcon />
           &nbsp;Enable Geolocation

@@ -36,7 +36,7 @@ interface CityCardProps {
 }
 
 const handleViewOnMap = (lat: number, lng: number) => {
-  const urlString = `https://maps.google.com/?q=${lat},${lng}&z=18`;
+  const urlString = `https://maps.google.com/?q=${lat},${lng}`;
   window.open(urlString);
 };
 

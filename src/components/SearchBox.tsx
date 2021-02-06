@@ -7,8 +7,8 @@ import {
   createStyles,
 } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
-import { searchForStringValues, debounce } from "../utils";
-import { useCitiesState, useCitiesDispatch } from "../context/CitiesContext";
+import { debounce } from "../utils";
+import { useCitiesDispatch } from "../context/CitiesContext";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,16 +58,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const SearchBox: React.FC = (): JSX.Element => {
   const classes = useStyles();
-  const { data } = useCitiesState();
   const filterDispatch = useCitiesDispatch();
 
   const handleSearch = debounce((searchTerm: string | undefined): void => {
-    console.log(searchTerm);
-    let filteredData = data;
-    if (searchTerm) {
-      filteredData = searchForStringValues(data, "city", searchTerm);
-    }
-    filterDispatch({ type: "setFilteredData", data: filteredData });
+    filterDispatch({ type: "setSearchTerm", searchTerm });
     return;
   });
 
