@@ -28,6 +28,15 @@ export type City = {
   populationNumeric: number;
 };
 
+export type NumericDataProps = keyof Pick<
+  City,
+  "lat" | "lng" | "populationNumeric"
+>;
+export type StringDataProps = keyof Omit<
+  City,
+  "lat" | "lng" | "populationNumeric"
+>;
+
 export type CititesContextState = {
   data: Array<City>;
   filteredData: Array<City>;
@@ -40,7 +49,7 @@ export type CititesContextState = {
 
 export type Sortables = {
   sortKey: SortableKey;
-  sortOrder: "ASC" | "DESC" | "None";
+  sortOrder: "ASC" | "DESC";
 };
 
 export type Filters = {

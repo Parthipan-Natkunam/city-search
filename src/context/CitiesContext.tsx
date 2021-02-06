@@ -21,10 +21,7 @@ const CitiesDispatchContext = React.createContext<CitiesDispatch | undefined>(
   undefined
 );
 
-const getFilteredState = (
-  state: CititesContextState,
-  resetProvinceArray?: boolean
-): CititesContextState => {
+const getFilteredState = (state: CititesContextState): CititesContextState => {
   const { data, filters } = state;
   const filteredData = getFilteredResults(data, filters);
   return {
@@ -47,48 +44,57 @@ function citiesReducer(state: CititesContextState, action: CitiesAction) {
             totalPages: Math.ceil(action.data.length / state.itemsPerPage),
           }
         : state;
+
     case "setCurrentPage":
       return action.currentPage
         ? { ...state, currentPage: action.currentPage }
         : state;
+
     case "setSortKey":
-      let filtersCopy = {
-        ...state.filters,
-      };
+      let newState: CititesContextState = { ...state };
       if (action.sortKey) {
-        filtersCopy = {
-          ...filtersCopy,
-          sort: {
-            sortKey: action.sortKey,
-            sortOrder: filtersCopy?.sort?.sortOrder ?? "ASC",
+        newState = {
+          ...state,
+          filters: {
+            ...state.filters,
+            sort: {
+              sortKey: action.sortKey,
+              sortOrder: state.filters?.sort?.sortOrder ?? "ASC",
+            },
           },
         };
       } else {
-        delete filtersCopy.sort;
+        newState?.filters?.sort && delete newState.filters.sort;
       }
-      return { ...state, filters: filtersCopy };
+      return getFilteredState(newState);
+
     case "setSortOrder": {
       if (action.sortOrder) {
-        const filtersCopy = {
-          ...state.filters,
-          sort: {
-            ...state.filters.sort,
-            sortOrder: action.sortOrder,
+        const newState = {
+          ...state,
+          filters: {
+            ...state.filters,
+            sort: {
+              ...state.filters.sort,
+              sortOrder: action.sortOrder,
+            },
           },
         };
-        return { ...state, filters: filtersCopy };
+        return getFilteredState(newState);
       }
       return;
     }
+
     case "setSearchTerm":
       if (action.searchTerm !== undefined) {
         const newState = {
           ...state,
           filters: { ...state.filters, name: action.searchTerm },
         };
-        return getFilteredState(newState, true);
+        return getFilteredState(newState);
       }
       return;
+
     case "setProvinceFilter":
       if (action.province) {
         const newState = {
@@ -98,6 +104,7 @@ function citiesReducer(state: CititesContextState, action: CitiesAction) {
         return getFilteredState(newState);
       }
       return;
+
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }

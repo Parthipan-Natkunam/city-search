@@ -51,7 +51,7 @@ const GranularFilters: React.FC = (): JSX.Element => {
         <DropDrownFilter
           label="Province"
           menuOptions={provinces}
-          value={filters?.province}
+          value={filters?.province || "None"}
           changeHandler={(val: string | undefined) =>
             filterDispatch({
               type: "setProvinceFilter",
