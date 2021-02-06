@@ -30,9 +30,6 @@ const getFilteredState = (
   return {
     ...state,
     filteredData: filteredData,
-    provinces: resetProvinceArray
-      ? getAllProvinces(filteredData)
-      : state.provinces,
     totalPages: Math.ceil(filteredData.length / state.itemsPerPage),
     currentPage: 1,
   };
