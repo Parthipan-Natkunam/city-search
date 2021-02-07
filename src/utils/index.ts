@@ -125,6 +125,7 @@ export function getFilteredResults(
   filters: Filters
 ): Array<City> {
   let results: Array<City>;
+
   // perform city search if searchTerm is present
   results = searchForStringValues(originalList, "city", filters?.name);
 
@@ -138,13 +139,13 @@ export function getFilteredResults(
 
     switch (sortKey.toLowerCase()) {
       case "name":
-        results = sortStrings(results, "city", sortOrder);
-        break;
+        return sortStrings([...results], "city", sortOrder);
       case "population":
-        results = sortNumbers(results, "populationNumeric", sortOrder);
-        break;
+        return sortNumbers([...results], "populationNumeric", sortOrder);
+      case "distance":
+        return sortNumbers([...results], "distanceFromUser", sortOrder);
       default:
-        results = sortNumbers(results, "distanceFromUser", sortOrder);
+        return results;
     }
   }
 
