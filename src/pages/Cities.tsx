@@ -94,7 +94,14 @@ const CitiesPage: React.FC = (): JSX.Element => {
         {cities?.length ? (
           <>
             {getCurrentPageData(cities, currentPage, itemsPerPage).map(
-              ({ city: name, population, province, lat, lng }: any) => (
+              ({
+                city: name,
+                population,
+                province,
+                lat,
+                lng,
+                distanceFromUser,
+              }: any) => (
                 <Grid item xs={12} sm={6} lg={4} key={`grid-${lat}-${lng}`}>
                   <CityCard
                     name={name}
@@ -102,6 +109,7 @@ const CitiesPage: React.FC = (): JSX.Element => {
                     province={province}
                     lat={lat}
                     lng={lng}
+                    distance={distanceFromUser}
                   />
                 </Grid>
               )

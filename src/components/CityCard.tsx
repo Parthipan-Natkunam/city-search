@@ -34,6 +34,7 @@ interface CityCardProps {
   province: string;
   lat: number;
   lng: number;
+  distance?: number;
 }
 
 const handleViewOnMap = (lat: number, lng: number) => {
@@ -47,6 +48,7 @@ const CityCard: React.FC<CityCardProps> = ({
   province,
   lat,
   lng,
+  distance,
 }): JSX.Element => {
   const classes = useStyles();
 
@@ -62,6 +64,15 @@ const CityCard: React.FC<CityCardProps> = ({
         <Typography color="textSecondary">
           <span className={classes.keyText}>Population: </span> {population}
         </Typography>
+        {distance && (
+          <>
+            <br />
+            <Typography color="textSecondary">
+              <span className={classes.keyText}>Distance: </span>{" "}
+              {Math.round(distance)} Km
+            </Typography>
+          </>
+        )}
       </CardContent>
       <CardActions className={classes.buttonWrapper}>
         <Button
