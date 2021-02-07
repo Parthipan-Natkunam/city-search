@@ -15,7 +15,7 @@ export const useFetchAllCities = (
     const fetchAllCities = async () => {
       try {
         const response = await fetch(citiesEndpoint);
-        const data = await response.json();
+        const { data } = await response.json();
         const processedData = getprocessedResponse(data);
         setIsLoading(false);
         dataDispatch({ type: "setData", data: processedData });

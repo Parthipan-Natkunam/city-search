@@ -14,7 +14,7 @@ module.exports = () => {
   return {
     entry: "./src/index.tsx",
     target: "web",
-    mode: "development",
+    mode: "production",
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "bundle.js",
