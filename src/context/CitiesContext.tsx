@@ -1,6 +1,15 @@
 import * as React from "react";
-import { CitiesAction, CitiesDispatch, CititesContextState } from "../types";
-import { getFilteredResults, getAllProvinces } from "../utils";
+import {
+  CitiesAction,
+  CitiesDispatch,
+  CititesContextState,
+  City,
+} from "../types";
+import {
+  getFilteredResults,
+  getAllProvinces,
+  calculateDistanceBetweenPointsInKm,
+} from "../utils";
 
 const initialState: CititesContextState = {
   data: [],
@@ -10,6 +19,8 @@ const initialState: CititesContextState = {
   totalPages: 0,
   itemsPerPage: 12,
   filters: null,
+  isGeolocationEnabled: null,
+  userLocation: null,
 };
 
 type ProviderProps = { children: React.ReactNode };
@@ -29,6 +40,24 @@ const getFilteredState = (state: CititesContextState): CititesContextState => {
     filteredData: filteredData,
     totalPages: Math.ceil(filteredData.length / state.itemsPerPage),
     currentPage: 1,
+  };
+};
+
+const addDistanceFieldToData = (
+  state: CititesContextState
+): CititesContextState => {
+  const { data, userLocation } = state;
+  const distanceAddedData = data.map((datum: City) => {
+    const { lat, lng } = datum;
+    const distanceInKm = calculateDistanceBetweenPointsInKm(userLocation, {
+      lat,
+      lng,
+    });
+    return { ...datum, distanceFromUser: distanceInKm };
+  });
+  return {
+    ...state,
+    data: distanceAddedData,
   };
 };
 
@@ -104,6 +133,18 @@ function citiesReducer(state: CititesContextState, action: CitiesAction) {
         return getFilteredState(newState);
       }
       return;
+
+    case "setUserLocation":
+      if (action.location) {
+        const newState = {
+          ...state,
+          userLocation: action.location,
+          isGeolocationEnabled: true,
+        };
+        const distanceAddedState = addDistanceFieldToData(newState);
+        return getFilteredState(distanceAddedState);
+      }
+      return { ...state, isGeolocationEnabled: false };
 
     default:
       throw new Error(`Unhandled action type: ${action.type}`);

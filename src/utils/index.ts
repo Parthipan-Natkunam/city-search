@@ -2,12 +2,14 @@ import {
   City,
   CityRawResponse,
   SearchableKey,
-  SortableKey,
   ExactMatchSearchableKey,
   NumericDataProps,
   StringDataProps,
   Filters,
+  GeoCoordinates,
 } from "../types";
+
+const oneRadian = Math.PI / 180;
 
 function processCityName(name: string | undefined): string {
   return name?.trim()?.length ? name.trim() : "Unnamed City";
@@ -125,15 +127,77 @@ export function getFilteredResults(
   let results: Array<City>;
   // perform city search if searchTerm is present
   results = searchForStringValues(originalList, "city", filters?.name);
+
   // perform province filter
   results = getExactMatchData(results, "province", filters?.province);
+
   // sort data
   if (filters?.sort?.sortKey) {
     const sortOrder = filters?.sort?.sortOrder;
-    results =
-      filters.sort.sortKey.toLowerCase() === "population"
-        ? sortNumbers(results, "populationNumeric", sortOrder)
-        : sortStrings(results, "city", sortOrder);
+    const sortKey = filters?.sort?.sortKey;
+
+    switch (sortKey.toLowerCase()) {
+      case "name":
+        results = sortStrings(results, "city", sortOrder);
+        break;
+      case "population":
+        results = sortNumbers(results, "populationNumeric", sortOrder);
+        break;
+      default:
+        results = sortNumbers(results, "distanceFromUser", sortOrder);
+    }
   }
+
   return results;
+}
+
+export const getUserLocation = (): Promise<GeoCoordinates> => {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject("Geolocation not supported by the browser");
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude: lat, longitude: lng } = position.coords;
+          if (typeof lat === void 0 || typeof lng === void 0) {
+            reject("Browser returned invalid location");
+          }
+          resolve({ lat, lng });
+        },
+        () => reject("Unable to get device location")
+      );
+    }
+  });
+};
+
+function degreeToRadians(locIndegree: GeoCoordinates): GeoCoordinates {
+  const { lat, lng } = locIndegree;
+  return {
+    lat: lat * oneRadian,
+    lng: lng * oneRadian,
+  };
+}
+
+function degreeToRadiansNumeric(degree: number): number {
+  return degree * oneRadian;
+}
+
+export function calculateDistanceBetweenPointsInKm(
+  location1: GeoCoordinates,
+  location2: GeoCoordinates
+) {
+  //calc based on Haversine formula, error rate 0.5%
+  const earthRadius = 6371;
+  const { lat: deltaLat, lng: deltaLng } = degreeToRadians({
+    lat: location2.lat - location1.lat,
+    lng: location2.lng - location1.lng,
+  });
+  const sideA =
+    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+    Math.cos(degreeToRadiansNumeric(location1.lat)) *
+      Math.cos(degreeToRadiansNumeric(location2.lat)) *
+      Math.sin(deltaLng / 2) *
+      Math.sin(deltaLng / 2);
+  const sideC = 2 * Math.atan2(Math.sqrt(sideA), Math.sqrt(1 - sideA));
+  return earthRadius * sideC; // disatnce in KM = RadiusofEarth*sideC
 }

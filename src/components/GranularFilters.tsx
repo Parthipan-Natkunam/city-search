@@ -6,6 +6,7 @@ import Button from "@material-ui/core/Button";
 import GpsNotFixedIcon from "@material-ui/icons/GpsNotFixed";
 import DropDrownFilter from "./FilterDropDrown";
 import { useCitiesState, useCitiesDispatch } from "../context/CitiesContext";
+import { getUserLocation } from "../utils";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -18,24 +19,35 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     boldTitle: {
       fontWeight: "bold",
-      // paddingRight: theme.spacing(1),
-      // borderRight: "2px solid #888585",
     },
     formWrapper: {
       flexBasis: "640px",
     },
-    button: {
+    geoLocation: {
       position: "absolute",
       top: 24,
       right: 15,
+      padding: theme.spacing(2),
     },
   })
 );
 
+const defaultSortMenuOption = ["None", "Name", "Population"];
+
 const GranularFilters: React.FC = (): JSX.Element => {
   const classes = useStyles();
-  const { filters, provinces } = useCitiesState();
+  const { filters, provinces, isGeolocationEnabled } = useCitiesState();
   const filterDispatch = useCitiesDispatch();
+
+  const handleGeoLocationEnable = async () => {
+    try {
+      const { lat, lng } = await getUserLocation();
+      filterDispatch({ type: "setUserLocation", location: { lat, lng } });
+    } catch (err) {
+      console.error(err);
+      filterDispatch({ type: "setUserLocation" });
+    }
+  };
 
   return (
     <Paper elevation={6} className={classes.paper}>
@@ -62,7 +74,11 @@ const GranularFilters: React.FC = (): JSX.Element => {
         />
         <DropDrownFilter
           label="Sort By"
-          menuOptions={["None", "Name", "Population"]}
+          menuOptions={
+            isGeolocationEnabled
+              ? [...defaultSortMenuOption, "Distance"]
+              : defaultSortMenuOption
+          }
           value={filters?.sort?.sortKey}
           changeHandler={(val: any) =>
             !!val
@@ -86,10 +102,30 @@ const GranularFilters: React.FC = (): JSX.Element => {
             applyDefaultSelection={!!filters?.sort}
           />
         ) : null}
-        <Button color="primary" variant="contained" className={classes.button}>
-          <GpsNotFixedIcon />
-          &nbsp;Enable Geolocation
-        </Button>
+        {isGeolocationEnabled ? (
+          <Typography
+            color="textSecondary"
+            variant="caption"
+            className={classes.geoLocation}
+            gutterBottom
+          >
+            Geolocation Enabled
+          </Typography>
+        ) : (
+          <Button
+            color="primary"
+            variant="contained"
+            className={classes.geoLocation}
+            onClick={handleGeoLocationEnable}
+            disabled={
+              typeof isGeolocationEnabled === "boolean" &&
+              isGeolocationEnabled === false
+            }
+          >
+            <GpsNotFixedIcon />
+            &nbsp;Enable Geolocation
+          </Button>
+        )}
       </div>
     </Paper>
   );

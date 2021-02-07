@@ -1,6 +1,6 @@
 export type SearchableKey = "city";
 export type ExactMatchSearchableKey = "province";
-export type SortableKey = SearchableKey | "population";
+export type SortableKey = "name" | "population" | "distanceFromUser";
 
 export type NetworkFetchResult = {
   isLoading: boolean;
@@ -26,16 +26,22 @@ export type City = {
   province: string;
   population: string;
   populationNumeric: number;
+  distanceFromUser?: number;
 };
 
 export type NumericDataProps = keyof Pick<
   City,
-  "lat" | "lng" | "populationNumeric"
+  "lat" | "lng" | "populationNumeric" | "distanceFromUser"
 >;
 export type StringDataProps = keyof Omit<
   City,
-  "lat" | "lng" | "populationNumeric"
+  "lat" | "lng" | "populationNumeric" | "distanceFromUser"
 >;
+
+export type GeoCoordinates = {
+  lat: number;
+  lng: number;
+};
 
 export type CititesContextState = {
   data: Array<City>;
@@ -45,6 +51,8 @@ export type CititesContextState = {
   itemsPerPage: number;
   filters: Filters | null;
   provinces: Array<string>;
+  isGeolocationEnabled?: boolean;
+  userLocation?: GeoCoordinates;
 };
 
 export type Sortables = {
@@ -66,6 +74,7 @@ export type CitiesAction = {
   sortOrder?: "ASC" | "DESC";
   searchTerm?: string;
   province?: string;
+  location?: GeoCoordinates;
 };
 
 export type CitiesDispatch = (action: CitiesAction) => void;
@@ -76,4 +85,5 @@ type CitiesActionTypes =
   | "setSearchTerm"
   | "setProvinceFilter"
   | "setSortKey"
-  | "setSortOrder";
+  | "setSortOrder"
+  | "setUserLocation";

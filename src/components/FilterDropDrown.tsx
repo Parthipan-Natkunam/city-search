@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme: Theme) =>
     formItem: {
       margin: theme.spacing(0, 2),
       width: 120,
+      [theme.breakpoints.down("sm")]: {
+        marginTop: theme.spacing(2),
+      },
     },
   })
 );
