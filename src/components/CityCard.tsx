@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       margin: theme.spacing(2),
+      boxShadow: theme.shadows[3],
     },
     textWrapper: {},
     name: {
