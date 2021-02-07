@@ -6,6 +6,7 @@ import {
   Pagination,
   GranularFilters,
   FilterFAB,
+  Loader,
 } from "../components";
 import { useFetchAllCities, useScreenWidth } from "../hooks";
 import { useCitiesState, useCitiesDispatch } from "../context/CitiesContext";
@@ -38,11 +39,18 @@ const useStyles = makeStyles((theme: Theme) =>
       borderBottom: "1px solid #888585",
       boxShadow: theme.shadows[10],
     },
+    infoText: {
+      margin: theme.spacing(3),
+      display: "flex",
+      width: "100%",
+      justifyContent: "center",
+    },
   })
 );
 
 const CitiesPage: React.FC = (): JSX.Element => {
   const { isLoading, isError } = useFetchAllCities(process.env.CITIES_ENDPOINT);
+  const isDataAvailable = !isError && !isLoading;
   const {
     filteredData: cities,
     currentPage,
@@ -68,15 +76,21 @@ const CitiesPage: React.FC = (): JSX.Element => {
     window.scroll({ top: 0, left: 0, behavior: "smooth" });
   };
 
-  return (
-    <>
-      <Grid container className={classes.filtersContainer}>
-        {showFilter && <GranularFilters />}
-        <FilterFAB isSmall={isSmall} clickHandler={handleFABClick} />
-      </Grid>
-      <Grid container className={classes.resultsContainer}>
-        {isLoading && <h1>Loading...</h1>}
-        {isError && <h1>Something went wrong...</h1>}
+  const DataCards: React.FC = (): JSX.Element => {
+    if (isError) {
+      return (
+        <div className={classes.infoText}>
+          <h3 className={classes.infoText}>
+            Something went wrong. Please try refreshing the page...
+          </h3>
+        </div>
+      );
+    }
+    if (isLoading) {
+      return <Loader />;
+    }
+    return (
+      <>
         {cities?.length ? (
           <>
             {getCurrentPageData(cities, currentPage, itemsPerPage).map(
@@ -93,15 +107,35 @@ const CitiesPage: React.FC = (): JSX.Element => {
               )
             )}
           </>
-        ) : null}
+        ) : (
+          <div className={classes.infoText}>
+            <h3>No Data Available...</h3>
+          </div>
+        )}
+      </>
+    );
+  };
+
+  return (
+    <>
+      {isDataAvailable ? (
+        <Grid container className={classes.filtersContainer}>
+          {showFilter && <GranularFilters />}
+          <FilterFAB isSmall={isSmall} clickHandler={handleFABClick} />
+        </Grid>
+      ) : null}
+      <Grid container className={classes.resultsContainer}>
+        <DataCards />
       </Grid>
-      <Grid container className={classes.paginationContainer}>
-        <Pagination
-          totalPages={totalPages}
-          currentPage={currentPage}
-          handlePageChange={handlePageChange}
-        />
-      </Grid>
+      {isDataAvailable ? (
+        <Grid container className={classes.paginationContainer}>
+          <Pagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            handlePageChange={handlePageChange}
+          />
+        </Grid>
+      ) : null}
     </>
   );
 };

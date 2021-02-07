@@ -4,3 +4,4 @@ export { default as Pagination } from "./Pagination";
 export { default as SearchBox } from "./SearchBox";
 export { default as GranularFilters } from "./GranularFilters";
 export { default as FilterFAB } from "./MobileFilterButton";
+export { default as Loader } from "./Loader";
