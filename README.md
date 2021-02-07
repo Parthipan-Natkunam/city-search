@@ -4,7 +4,7 @@ A quick PoC built with React, Material UI, Typescript, webpack, AWS lambda and A
 
 ### Deployed App
 
-The live version of the app is available [here]("https://parthipan.co.in/city-search)
+The live version of the app is available [here](https://parthipan.co.in/city-search)
 
 ### Features
 
